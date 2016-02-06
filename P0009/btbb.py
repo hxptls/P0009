@@ -11,6 +11,12 @@ import requests
 from bs4 import BeautifulSoup
 
 
+def get_title_from_url(url):
+    raw = _get_raw_text_from_url_and_page(url, 1)
+    soup = BeautifulSoup(raw, 'html5lib')
+    return soup.title.string
+
+
 def get_url_from_tid(tid):
     if type(tid) == int and tid > 0:
         return 'http://tieba.baidu.com/p/' + str(tid)
@@ -180,7 +186,13 @@ def d_get_rid_of_a(c):
 
 
 def get_a(c):
-    return BeautifulSoup(c, 'html5lib').a.string
+    try:
+        return BeautifulSoup(c, 'html5lib').a.string
+    except AttributeError:
+        if c.find('http://') != -1:
+            return c[c.find('http://'):].split(' ')[0]
+        else:
+            return ''
 
 # x1 = 'http://tieba.baidu.com/p/4260990232'
 # x2 = get_all_floors(x1)
